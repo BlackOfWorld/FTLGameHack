@@ -8,22 +8,19 @@
 #include <iostream>
 #include <Windows.h>
 #include <psapi.h>
-HMODULE GetGameModHandle(HANDLE gHandle)
+HMODULE GetGameModHandle()
 {
 	HMODULE hMods[1024];
 	DWORD cbNeeded;
 
-	if (EnumProcessModules(gHandle, hMods, sizeof(hMods), &cbNeeded))
+	if (EnumProcessModules(globals::gameHandle, hMods, sizeof(hMods), &cbNeeded))
 	{
 		for (unsigned int i = 0; i < (cbNeeded / sizeof(HMODULE)); i++)
 		{
 			TCHAR szModName[MAX_PATH];
-			if (GetModuleFileNameEx(gHandle, hMods[i], szModName, sizeof(szModName) / sizeof(TCHAR)))
+			if (GetModuleFileNameEx(globals::gameHandle, hMods[i], szModName, sizeof(szModName) / sizeof(TCHAR)))
 			{
-				std::wstring wstrModName = szModName;
-				//you will need to change this to the name of the exe of the foreign process
-				std::wstring wstrModContain = L"FTLGame.exe";
-				if (wstrModName.find(wstrModContain) != std::string::npos)
+				if (wcsstr(szModName, L"FTLGame.exe") != nullptr)
 				{
 					return hMods[i];
 				}
@@ -74,7 +71,7 @@ void ClearConsole(char fill = ' ')
 	FillConsoleOutputAttribute(hOut, s.wAttributes, cells, tl, &written);
 	SetConsoleCursorPosition(hOut, tl);
 }
-void setValues(int number = 1000,int hull = 30,BOOL rapid = 1, BOOL invisShip = 1)
+void setValues(int number = 1000, int hull = 30, BOOL rapid = 1, BOOL invisShip = 1, BOOL mapDetails = 1)
 {
 	WriteProcessMemory(globals::gameHandle, (void*)globals::pScrap, &number, sizeof(number), nullptr);
 	WriteProcessMemory(globals::gameHandle, (void*)globals::pWarp, &number, sizeof(number), nullptr);
@@ -95,6 +92,7 @@ void setValues(int number = 1000,int hull = 30,BOOL rapid = 1, BOOL invisShip = 
 		WriteProcessMemory(globals::gameHandle, (void*)globals::pWeapon8Ready, &full, sizeof(full), nullptr);
 	}
 	WriteProcessMemory(globals::gameHandle, (void*)globals::pShipInvis, &invisShip, sizeof(BYTE), nullptr);
+	WriteProcessMemory(globals::gameHandle, (void*)globals::showMapDetails, &mapDetails, sizeof(mapDetails), nullptr);
 }
 void PrintValues()
 {
@@ -116,6 +114,7 @@ void PrintValues()
 	BOOL inFight = 0;
 	BYTE shipInvis = 0;
 	BOOL isAE_Enabled = 0;
+	BOOL showMapDetails = 0;
 	ReadProcessMemory(globals::gameHandle, (void*)globals::pScrap, &scrapValue, sizeof(scrapValue), nullptr);
 	ReadProcessMemory(globals::gameHandle, (void*)globals::pWarp, &warpValue, sizeof(warpValue), nullptr);
 	ReadProcessMemory(globals::gameHandle, (void*)globals::pRockets, &rocketValue, sizeof(rocketValue), nullptr);
@@ -133,7 +132,8 @@ void PrintValues()
 	ReadProcessMemory(globals::gameHandle, (void*)globals::inDanger, &inFight, sizeof(inFight), nullptr);
 	ReadProcessMemory(globals::gameHandle, (void*)globals::inSector, &sectorValue, sizeof(sectorValue), nullptr);
 	ReadProcessMemory(globals::gameHandle, (void*)globals::isAE_Enabled, &isAE_Enabled, sizeof(isAE_Enabled), nullptr);
-	printf("Game handle: 0x%p\nBase address: 0x%p\nPointer to scrap: 0x%lX\nPointer to warps: 0x%lX\nPointer to rockets: 0x%lX\nPointer to drone parts: 0x%lX\nPointer to hull: 0x%lX\nPointer to weapon 1 ready: 0x%lX\nPointer to weapon 2 ready: 0x%lX\nPointer to weapon 3 ready: 0x%lX\nPointer to weapon 4 ready: 0x%lX\nPointer to weapon 5 ready: 0x%lX\nPointer to weapon 6 ready: 0x%lX\nPointer to weapon 7 ready: 0x%lX\nPointer to weapon 8 ready: 0x%lX\nPointer to ship invis: 0x%lX\nStatic address to in danger: 0x%lX\nStatic address to in sector: 0x%lX\nStatic address to AE Enabled: 0x%lX\nCurrent amount of scrap: %d          \nCurrent amount of warps: %d          \nCurrent amount of rockets: %d          \nCurrent amount of drone parts: %d          \nCurrent HP (hull): %d          \nWeapon 1 ready: %d          \nWeapon 2 ready: %d          \nWeapon 3 ready: %d          \nWeapon 4 ready: %d          \nWeapon 5 ready: %d          \nWeapon 6 ready: %d          \nWeapon 7 ready: %d          \nWeapon 8 ready: %d          \nShip invis: %d          \nIn danger: %d          \nIn sector: %d          \nIs advanced content enabled: %d          \n", globals::gameHandle, globals::gameMod, globals::pScrap, globals::pWarp, globals::pRockets, globals::pDroneParts, globals::pHull, globals::pWeapon1Ready, globals::pWeapon2Ready, globals::pWeapon3Ready, globals::pWeapon4Ready, globals::pWeapon5Ready, globals::pWeapon6Ready, globals::pWeapon7Ready, globals::pWeapon8Ready, globals::pShipInvis, globals::inDanger,globals::inSector, globals::isAE_Enabled, scrapValue, warpValue, rocketValue, dronePartsValue, hullValue, weapon1Ready, weapon2Ready, weapon3Ready, weapon4Ready, weapon5Ready, weapon6Ready, weapon7Ready, weapon8Ready, shipInvis, inFight, sectorValue, isAE_Enabled);
+	ReadProcessMemory(globals::gameHandle, (void*)globals::showMapDetails, &showMapDetails, sizeof(showMapDetails), nullptr);
+	printf("Game handle: 0x%p\nBase address: 0x%p\nPointer to scrap: 0x%lX\nPointer to warps: 0x%lX\nPointer to rockets: 0x%lX\nPointer to drone parts: 0x%lX\nPointer to hull: 0x%lX\nPointer to weapon 1 ready: 0x%lX\nPointer to weapon 2 ready: 0x%lX\nPointer to weapon 3 ready: 0x%lX\nPointer to weapon 4 ready: 0x%lX\nPointer to weapon 5 ready: 0x%lX\nPointer to weapon 6 ready: 0x%lX\nPointer to weapon 7 ready: 0x%lX\nPointer to weapon 8 ready: 0x%lX\nPointer to ship invis: 0x%lX\nPointer to show map details: 0x%lX\nStatic address to in danger: 0x%lX\nStatic address to in sector: 0x%lX\nStatic address to AE Enabled: 0x%lX\nCurrent amount of scrap: %d          \nCurrent amount of warps: %d          \nCurrent amount of rockets: %d          \nCurrent amount of drone parts: %d          \nCurrent HP (hull): %d          \nWeapon 1 ready: %d          \nWeapon 2 ready: %d          \nWeapon 3 ready: %d          \nWeapon 4 ready: %d          \nWeapon 5 ready: %d          \nWeapon 6 ready: %d          \nWeapon 7 ready: %d          \nWeapon 8 ready: %d          \nShip invis: %d          \nIn danger: %d          \nIn sector: %d          \nIs advanced content enabled: %d          \nIs map details shown: %d         ", globals::gameHandle, globals::gameMod, globals::pScrap, globals::pWarp, globals::pRockets, globals::pDroneParts, globals::pHull, globals::pWeapon1Ready, globals::pWeapon2Ready, globals::pWeapon3Ready, globals::pWeapon4Ready, globals::pWeapon5Ready, globals::pWeapon6Ready, globals::pWeapon7Ready, globals::pWeapon8Ready, globals::pShipInvis, globals::showMapDetails, globals::inDanger, globals::inSector, globals::isAE_Enabled, scrapValue, warpValue, rocketValue, dronePartsValue, hullValue, weapon1Ready, weapon2Ready, weapon3Ready, weapon4Ready, weapon5Ready, weapon6Ready, weapon7Ready, weapon8Ready, shipInvis, inFight, sectorValue, isAE_Enabled, showMapDetails);
 }
 DWORD WINAPI Hihi(LPVOID param)
 {
@@ -166,6 +166,7 @@ DWORD WINAPI refreshPointers(LPVOID param) {
 		globals::pScrap = GetValuePointer((DWORD)pValClass, pointers::pointerToScrap);
 		globals::pWarp = GetValuePointer((DWORD)pValClass, pointers::pointerToWarp);
 		globals::pHull = GetValuePointer((DWORD)pValClass, pointers::pointerToHull);
+		globals::showMapDetails = GetValuePointers((DWORD)globals::gameMod + 0x004C4498, pointers::pointersToShowMap, 10);
 		globals::inDanger = (DWORD)globals::gameMod + offsets::inDanger;
 		globals::inSector = (DWORD)globals::gameMod + offsets::inSector;
 		globals::isAE_Enabled = (DWORD)globals::gameMod + offsets::isAE_Enabled;
@@ -196,7 +197,7 @@ int main()
 		puts("Could not open handle to the game!");
 		return 2;
 	}
-	globals::gameMod = GetGameModHandle(globals::gameHandle);
+	globals::gameMod = GetGameModHandle();
 	CreateThread(nullptr, 0, refreshPointers, nullptr, 0, nullptr);
 	CreateThread(nullptr, 0, Hihi, nullptr, 0, nullptr);
 	getchar();

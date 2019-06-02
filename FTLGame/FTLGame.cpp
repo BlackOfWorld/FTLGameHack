@@ -7,7 +7,8 @@
 #include "pointers.h"
 #include <iostream>
 #include <Windows.h>
-#include <psapi.h>
+#include <Psapi.h>
+#define VERSION 1 // 0 for discord, 1 for gog
 HMODULE GetGameModHandle(HANDLE gHandle)
 {
 	HMODULE hMods[1024];
@@ -162,7 +163,8 @@ DWORD WINAPI refreshPointers(LPVOID param) {
 		globals::pWeapon8Ready = GetValuePointers((DWORD)pValClass, pointers::pointersToWeapon8Ready, 5);
 		globals::pShipInvis = GetValuePointers((DWORD)pValClass, pointers::pointersToShipInvis, 2);
 		globals::pRockets = GetValuePointers((DWORD)pValClass, pointers::pointersToRockets, 2);
-		globals::pDroneParts = GetValuePointers((DWORD)pValClass, pointers::pointersToDroneParts,4);
+		//globals::pDroneParts = GetValuePointers((DWORD)pValClass, pointers::pointersToDroneParts,4);
+		globals::pDroneParts = GetValuePointer((DWORD)pValClass, 0x800);
 		globals::pScrap = GetValuePointer((DWORD)pValClass, pointers::pointerToScrap);
 		globals::pWarp = GetValuePointer((DWORD)pValClass, pointers::pointerToWarp);
 		globals::pHull = GetValuePointer((DWORD)pValClass, pointers::pointerToHull);
@@ -174,6 +176,12 @@ DWORD WINAPI refreshPointers(LPVOID param) {
 }
 int main()
 {
+#if VERSION == 1
+	offsets::inDanger += 0x1000;
+	offsets::inSector += 0x1000;
+	offsets::isAE_Enabled += 0x1000;
+	offsets::saveClass += 0x1000;
+#endif
 	SetConsoleTitle(L"BlackOfWorld's super elite haxx 4 FTL: Faster Than Light");
 	SetConsoleCtrlHandler(CTRL_C_Handler, true);
 	hOut = GetStdHandle(STD_OUTPUT_HANDLE);

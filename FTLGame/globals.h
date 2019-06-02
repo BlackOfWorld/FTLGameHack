@@ -19,6 +19,7 @@ namespace globals
 	unsigned long inDanger = -1;
 	unsigned long inSector = -1;
 	unsigned long isAE_Enabled = -1;
+	unsigned long showMapDetails = -1;
 	void* gameHandle = nullptr;
 	void* gameMod = nullptr;
 	void* gameWindow = nullptr;

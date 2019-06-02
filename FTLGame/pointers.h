@@ -2,7 +2,7 @@
 namespace pointers {
 	int pointerToScrap = 0x4D4;
 	int pointerToWarp = 0x494;
-	int pointersToDroneParts[4] = {0x4C,0x20,0x11C,0x80};
+	int pointersToDroneParts[4] = {0x4C,0x20,0x11C,0x80}; // sig could be "00 00 ?? ?? ?? ?? 00 00 00 00 ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? 01 ?? ?? ?? 01 01 01 ?? 00 00 00 00 ?? ?? 66 1A ?? ?? 66 1A ?? ?? 66 1A"
 	int pointerToHull = 0xCC;
 	int pointersToRockets[2] = { 0x48,0x1E8 };
 	//found info at FTLGame.exe+20F827 (GOG version)
@@ -15,4 +15,5 @@ namespace pointers {
 	int pointersToWeapon7Ready[5] = { 0x48, 0x144, 0x7C, 0x8, 0x62C };
 	int pointersToWeapon8Ready[5] = { 0x48, 0x144, 0x7C, 0xC, 0x62C };
 	int pointersToShipInvis[2] = { 0x2C,0x1C0 };
+	int pointersToShowMap[10] = { 0x20,0x10,0xB8,0xD0,0xD0,0x20,0x4,0x8,0x0,0x37C };
 };

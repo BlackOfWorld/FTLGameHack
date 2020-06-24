@@ -1,25 +1,26 @@
-#pragma once
-void* hOut = nullptr;
+#pragma once	
 namespace globals
 {
-	unsigned long pWarp = -1;
-	unsigned long pScrap = -1;
-	unsigned long pRockets = -1;
-	unsigned long pDroneParts = -1;
-	unsigned long pHull = -1;
-	unsigned long pWeapon1Ready = -1;
-	unsigned long pWeapon2Ready = -1;
-	unsigned long pWeapon3Ready = -1;
-	unsigned long pWeapon4Ready = -1;
-	unsigned long pWeapon5Ready = -1;
-	unsigned long pWeapon6Ready = -1;
-	unsigned long pWeapon7Ready = -1;
-	unsigned long pWeapon8Ready = -1;
-	unsigned long pShipInvis = -1;
-	unsigned long inDanger = -1;
-	unsigned long inSector = -1;
-	unsigned long isAE_Enabled = -1;
-	unsigned long showMapDetails = -1;
+	uintptr_t pWarp = -1;
+	uintptr_t pScrap = -1;
+	uintptr_t pRockets = -1;
+	uintptr_t pDroneParts = -1;
+	uintptr_t pHull = -1;
+	uintptr_t pWeapon1Ready = -1;
+	uintptr_t pWeapon2Ready = -1;
+	uintptr_t pWeapon3Ready = -1;
+	uintptr_t pWeapon4Ready = -1;
+	uintptr_t pWeapon5Ready = -1;
+	uintptr_t pWeapon6Ready = -1;
+	uintptr_t pWeapon7Ready = -1;
+	uintptr_t pWeapon8Ready = -1;
+	uintptr_t pEnergy = -1;
+	uintptr_t pShipInvis = -1;
+	uintptr_t inSector = -1;
+	uintptr_t isAE_Enabled = -1;
+	uintptr_t showMapDetails = -1;
+	uintptr_t pInstaJump = -1;
+	uintptr_t pEnemyHealth = -1;
 	void* gameHandle = nullptr;
 	void* gameMod = nullptr;
 	void* gameWindow = nullptr;
